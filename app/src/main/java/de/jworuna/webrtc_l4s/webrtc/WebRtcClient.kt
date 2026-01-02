@@ -262,11 +262,18 @@ class WebRtcClient(private val context: Context) {
         Logging.enableLogToDebugOutput(Logging.Severity.LS_INFO)
         Logging.enableLogTimeStamps()
 
+        /*
+        val options = PeerConnectionFactory.Options().apply {
+            disableEncryption = true
+        }
+        */
+
         val encoderFactory = DefaultVideoEncoderFactory(eglBase.eglBaseContext, true, true)
         val decoderFactory = DefaultVideoDecoderFactory(eglBase.eglBaseContext)
         peerConnectionFactory = PeerConnectionFactory.builder()
             .setVideoEncoderFactory(encoderFactory)
             .setVideoDecoderFactory(decoderFactory)
+            //.setOptions(options)
             .createPeerConnectionFactory()
     }
 
@@ -608,11 +615,6 @@ class WebRtcClient(private val context: Context) {
     }
 
     fun addIceCandidate(candidate: IceCandidate) {
-        val addresses = extractCandidateAddresses(candidate)
-        if (!isCandidateSliceExclusive(addresses)) {
-            Log.d(TAG, "Ignore remote ICE candidate (not on slice): ${candidate.sdp}")
-            return
-        }
         peerConnection?.addIceCandidate(candidate)
     }
 
